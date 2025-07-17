@@ -8,6 +8,7 @@
 # ================================
 # Membres du groupe :
 #     BOSOLINDO EDHIENGENE ROGER (GEI)
+#     BAMPIRE NGABO DAVID (GEI)
 #     ESAFE ISIMO BENJAMIN (GC)
 #     KABONGO MUKENDI ODON (GM)
 #     MUKENGE KOLM THADDEE (GEI)
