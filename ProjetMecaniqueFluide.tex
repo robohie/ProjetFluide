@@ -1,0 +1,19 @@
+\documentclass{article}
+\usepackage{amsmath}
+\begin{document}
+\section*{Ecoulement : uniforme}
+Potentiel complexe \[7 x + 7 i y\]
+Fonction potentielle \[7 x\]
+Fonction courant \[7 y\]
+Champ vectoriel \[\left[\begin{matrix}7\\0\end{matrix}\right]\]
+\section*{Ecoulement : puits}
+Potentiel complexe \[- \frac{\log{\left(x + i y - 1 \right)}}{\pi}\]
+Fonction potentielle \[- \frac{\log{\left(\sqrt{x^{2} - 2 x + y^{2} + 1} \right)}}{\pi}\]
+Fonction courant \[- \frac{\arg{\left(x + i y - 1 \right)}}{\pi}\]
+Champ vectoriel \[\left[\begin{matrix}- \frac{x - 1}{\pi \left(x^{2} - 2 x + y^{2} + 1\right)}\\- \frac{y}{\pi \left(x^{2} - 2 x + y^{2} + 1\right)}\end{matrix}\right]\]
+\section*{Ecoulement : uniforme et source et puits combinés combinés}
+Potentiel complexe \[7 x + 7 i y - \frac{\log{\left(x + i y - 1 \right)}}{\pi} + \frac{1.25 \log{\left(x + i y + 2 \right)}}{\pi}\]
+Fonction potentielle \[7 x - \frac{\log{\left(\sqrt{x^{2} - 2 x + y^{2} + 1} \right)}}{\pi} + \frac{1.25 \log{\left(\sqrt{x^{2} + 4 x + y^{2} + 4} \right)}}{\pi}\]
+Fonction courant \[7 y - \frac{\arg{\left(x + i y - 1 \right)}}{\pi} + \frac{1.25 \arg{\left(x + i y + 2 \right)}}{\pi}\]
+Champ vectoriel \[\left[\begin{matrix}- \frac{x - 1}{\pi \left(x^{2} - 2 x + y^{2} + 1\right)} + \frac{1.25 \left(x + 2\right)}{\pi \left(x^{2} + 4 x + y^{2} + 4\right)} + 7\\\frac{1.25 y}{\pi \left(x^{2} + 4 x + y^{2} + 4\right)} - \frac{y}{\pi \left(x^{2} - 2 x + y^{2} + 1\right)}\end{matrix}\right]\]
+\end{document}
