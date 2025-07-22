@@ -41,19 +41,26 @@ def courant(objet, a, b, niveaux):
     y_vals = np.linspace(-b, b, 200)
     X, Y = np.meshgrid(x_vals, y_vals)
 
-    psi = sympy.lambdify((objet.x, objet.y), objet.psi(), "numpy")
+    if isinstance(objet, ProfilJoukowski):
+        # Evaluation spéciale pour Joukowski
+        Psi = objet.eval_psi(X, Y)
+    else:
+        psi = sympy.lambdify((objet.x, objet.y), objet.psi(), "numpy")
+        Psi = psi(X, Y)
 
-    Psi = psi(X, Y)
-
-    fig, axe = plt.subplots(figsize=(8, 6))
+    figure, axe = plt.subplots(figsize=(8, 6))
 
     axe.contour(X, Y, Psi, levels=niveaux)
+
+    # Tracer les lignes de courant
+    if isinstance(objet, ProfilJoukowski):
+        axe.plot(objet.profil_x, objet.profil_y, "r-", linewidth=2)
+
     axe.set_title(label=f"lignes de courant ({objet.nom})")
     axe.grid(True)
     axe.set_aspect("equal")
-    fig.tight_layout()
 
-    return fig
+    return figure
 
 
 def potentiel(objet, a, b, niveaux):
@@ -64,19 +71,20 @@ def potentiel(objet, a, b, niveaux):
     y_vals = np.linspace(-b, b, 400)
     X, Y = np.meshgrid(x_vals, y_vals)
 
-    phi = sympy.lambdify((objet.x, objet.y), objet.phi(), "numpy")
+    if isinstance(objet, ProfilJoukowski):
+        Phi = objet.eval_phi(X, Y)
+    else:
+        phi = sympy.lambdify((objet.x, objet.y), objet.phi(), "numpy")
+        Phi = phi(X, Y)
 
-    Phi = phi(X, Y)
-
-    fig, axe = plt.subplots(figsize=(8, 6))
+    figure, axe = plt.subplots(figsize=(8, 6))
 
     axe.contour(X, Y, Phi, levels=niveaux)
     axe.set_title(label=f"Equipotentiels ({objet.nom})")
     axe.grid(True)
     axe.set_aspect("equal")
-    fig.tight_layout()
 
-    return fig
+    return figure
 
 
 def champ(objet, x_lim=(-10, 10), y_lim=(-10, 10), density=20):
@@ -203,6 +211,7 @@ class Tourbillon(PlanPlus):
     de l'intelligence artificielle
     ChatGPT afin de tenir compte d'un
     comporte un peu plus réaliste"""
+
     def __init__(self, gamma=1.5):
         super().__init__()
         self.gamma = gamma
@@ -211,28 +220,129 @@ class Tourbillon(PlanPlus):
         self.update()
 
 
-if __name__ == "__main__":
-    E1 = EUniforme(15)
-    E2 = Puits(1, 3)
-    E3 = Source(1, 3)
-    E4 = Tourbillon(gamma=1.5)
+class ProfilJoukowski(PlanPlus):
+    """Classe pour simuler l'écoulement
+    l'écoulement autour d'un profil NACA
+    à l'aide de la transformation de
+    Joukowski
+    """
 
-    E = E1 + E2 + E3 + E4
+    def __init__(self, u_inf=1.0, alpha=0.0, c=1.0, x0=-0.1, y0=0.1, gamma=None):
+        """Ce code est une proposition de DeepSeek
+        pour tenir compte du cas d'un profil réel
+        comme le NACA
+
+        :param u_inf: vitesse à l'infini
+        :param alpha: angle d'attaque en radians
+        :param c: Paramètre de la transformation
+        :param x0: Décalage en x du centre du cercle
+        :param y0: Décalage en y du centre du cercle
+        :param gamma: lié à la condition de Kuta
+        """
+        super().__init__("Profil")
+
+        # Paramètres de la transformation
+        self.c = c
+        self.x0 = x0
+        self.y0 = y0
+
+        # Calcul du rayon du cercle pour passer par (c, 0)
+        self.R = np.sqrt((x0 + c) ** 2 + y0 ** 2)
+
+        # Paramètres de l'écoulement
+        self.U_inf = u_inf
+        self.alpha = alpha
+
+        # Circulation
+        if gamma is None:
+            self.gamma = (-4 * np.pi * u_inf * self.R *
+                          np.sin(alpha + np.arcsin(y0 / self.R)))
+        else:
+            self.gamma = gamma
+
+        # potentiel complexe dans le plan du cercle
+        z0 = x0 + y0 * sympy.I
+        self.z0 = x0 + y0 * 1j
+
+        # Ecoulement uniforme incliné autour du cercle
+        terme1 = u_inf * (sympy.exp(-sympy.I * alpha) * (self.z - z0) +
+                          (self.R ** 2 * sympy.exp(sympy.I * alpha)) /
+                          self.z - z0)
+
+        # Tourbillon au centre du cercle
+        terme2 = (sympy.I * self.gamma) / (2 * sympy.pi) * sympy.log(self.z - z0)
+
+        self.f_circle = terme1 + terme2
+
+        # Transformation de Joukowski
+        self.f = self.f_circle.subs(self.z, self.z + self.c ** 2 / self.z)
+
+        # Générer les points du profil
+        self._generer_profil()
+
+        self.update()
+
+    def _generer_profil(self):
+        """Génère les coordonnées du profil Joukowski"""
+        theta = np.linspace(0, 2 * np.pi, 200)
+        z_c = self.x0 + 1j * self.y0 + self.R * np.exp(1j * theta)
+        zeta = z_c + self.c ** 2 / z_c
+        self.profil_x = np.real(zeta)
+        self.profil_y = np.imag(zeta)
+
+    def f_cercle(self, z):
+        """Potentiel complexe dans le plan du cercle
+        (évaluation numérique)
+        """
+        terme2 = (1j * self.gamma) / (2 * np.pi) * np.log(z - self.z0)
+        terme1 = self.U_inf * (np.exp(-1j * self.alpha) * (z - self.z0) +
+                               (self.R ** 2 * np.exp(1j * self.alpha)) /
+                               z - self.z0)
+        return terme1 + terme2
+
+    def eval_phi(self, x, y):
+        """Evaluation numérique de la fonction potentielle"""
+        zeta = x + 1j * y
+        # Transformation inverse de Joukowski
+        with np.errstate(all="ignore"):
+            z_c = (zeta + np.sqrt(zeta ** 2 - 4 * self.c ** 2)) / 2
+
+        # Evaluation du potentiel complexe
+        f_val = self.f_cercle(z_c)
+        return np.real(f_val)
+
+    def eval_psi(self, x, y):
+        """Evaluation numérique de la fonction de courant"""
+        zeta = x + 1j * y
+        # Transformation inverse de Joukowski
+        with np.errstate(all="ignore"):
+            z_c = (zeta + np.sqrt(zeta ** 2 - 4 * self.c ** 2)) / 2
+
+        # Evaluation du potentiel complexe
+        f_val = self.f_cercle(z_c)
+
+        return np.imag(f_val)
+
+
+if __name__ == "__main__":
+    P1 = ProfilJoukowski(
+        u_inf=1.0,
+        alpha=np.radians(5),
+        c=1.0,
+        x0=-0.1,
+        y0=0.1
+    )
+
+    # Tracé des lignes de courant
+    fig = courant(P1, 3, 3, np.linspace(-2, 2, 10))
+    plt.show()
 
     try:
         with open("ProjetMecaniqueFluide.tex", "w") as tex:
             tex.write("\\documentclass{article}\n"
                       "\\usepackage{amsmath}\n"
                       "\\begin{document}\n")
-            tex.write(latex(E1))
-            tex.write(latex(E2))
-            tex.write(latex(E))
+            tex.write(latex(P1))
             tex.write("\\end{document}\n")
     except IOError as e:
         print(f"Erreur lors de l'écriture du fichier LaTeX : {e}")
-
-    fig1 = courant(E, 3, 3, np.linspace(-10, 10, 5))
-    # fig2 = potentiel(E, 3, 3, np.linspace(-10, 10, 50))
-    # champ(E, (-2, 2), (-1, 1))
-
-    plt.show()
