@@ -51,6 +51,7 @@ def courant(objet, a, b, niveaux):
     axe.set_title(label=f"lignes de courant ({objet.nom})")
     axe.grid(True)
     axe.set_aspect("equal")
+    fig.tight_layout()
 
     return fig
 
@@ -73,6 +74,7 @@ def potentiel(objet, a, b, niveaux):
     axe.set_title(label=f"Equipotentiels ({objet.nom})")
     axe.grid(True)
     axe.set_aspect("equal")
+    fig.tight_layout()
 
     return fig
 
@@ -212,7 +214,7 @@ class Tourbillon(PlanPlus):
 if __name__ == "__main__":
     E1 = EUniforme(15)
     E2 = Puits(1, 3)
-    E3 = Source(0.5, 5)
+    E3 = Source(1, 3)
     E4 = Tourbillon(gamma=1.5)
 
     E = E1 + E2 + E3 + E4
@@ -229,7 +231,7 @@ if __name__ == "__main__":
     except IOError as e:
         print(f"Erreur lors de l'écriture du fichier LaTeX : {e}")
 
-    fig1 = courant(E, 3, 3, np.linspace(-10, 10, 10))
+    fig1 = courant(E, 3, 3, np.linspace(-10, 10, 5))
     # fig2 = potentiel(E, 3, 3, np.linspace(-10, 10, 50))
     # champ(E, (-2, 2), (-1, 1))
 
