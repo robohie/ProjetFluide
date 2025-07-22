@@ -34,37 +34,47 @@ def latex(objet):
 
 
 def courant(objet, a, b, niveaux):
-    """Trace les courbes de courant pour plusieurs niveaux."""
-    figures = []
-    for n in niveaux:
-        fig = sympy.plot_implicit(objet.c_niv1(n), (objet.x, -a, a),
-                                  (objet.y, -b, b), show=False,
-                                  adaptive=False, depth=4)
-        figures.append(fig)
-    # Fusionner les figures
-    fig_final = figures[0]
-    for f in figures[1:]:
-        fig_final.extend(f)
-    fig_final.title = "Fonction de courant de l'écoulement"
-    fig_final.xlabel = "X"
-    fig_final.ylabel = "Y"
-    return fig_final
+    """Fonction qui trace les lignes de courant
+    """
+    niveaux = sorted(niveaux)
+    x_vals = np.linspace(-a, a, 200)
+    y_vals = np.linspace(-b, b, 200)
+    X, Y = np.meshgrid(x_vals, y_vals)
+
+    psi = sympy.lambdify((objet.x, objet.y), objet.psi(), "numpy")
+
+    Psi = psi(X, Y)
+
+    fig, axe = plt.subplots(figsize=(8, 6))
+
+    axe.contour(X, Y, Psi, levels=niveaux)
+    axe.set_title(label=f"lignes de courant ({objet.nom})")
+    axe.grid(True)
+    axe.set_aspect("equal")
+
+    return fig
 
 
 def potentiel(objet, a, b, niveaux):
-    """Trace les courbes de potentiel pour plusieurs niveaux."""
-    figures = []
-    for n in niveaux:
-        fig = sympy.plot_implicit(objet.c_niv2(n), (objet.x, -a, a),
-                                  (objet.y, -b, b), show=False)
-        figures.append(fig)
-    fig_final = figures[0]
-    for f in figures[1:]:
-        fig_final.extend(f)
-    fig_final.title = "Fonction potentielle de l'écoulement"
-    fig_final.xlabel = "X"
-    fig_final.ylabel = "Y"
-    return fig_final
+    """Fonction qui trace les équipotentiels
+    """
+    niveaux = sorted(niveaux)
+    x_vals = np.linspace(-a, a, 400)
+    y_vals = np.linspace(-b, b, 400)
+    X, Y = np.meshgrid(x_vals, y_vals)
+
+    phi = sympy.lambdify((objet.x, objet.y), objet.phi(), "numpy")
+
+    Phi = phi(X, Y)
+
+    fig, axe = plt.subplots(figsize=(8, 6))
+
+    axe.contour(X, Y, Phi, levels=niveaux)
+    axe.set_title(label=f"Equipotentiels ({objet.nom})")
+    axe.grid(True)
+    axe.set_aspect("equal")
+
+    return fig
 
 
 def champ(objet, x_lim=(-10, 10), y_lim=(-10, 10), density=20):
@@ -108,7 +118,7 @@ class PlanPlus:
         f = self.f + other.f
         new_field = PlanPlus()
         new_field.f = f
-        new_field.nom = f"{self.nom} et {other.nom} combinés"
+        new_field.nom = f"{self.nom}, {other.nom}"
         new_field.update()
         return new_field
 
@@ -186,22 +196,27 @@ class Source(PlanPlus):
         self.update()
 
 
+class Tourbillon(PlanPlus):
+    """Cette classe est une proposition
+    de l'intelligence artificielle
+    ChatGPT afin de tenir compte d'un
+    comporte un peu plus réaliste"""
+    def __init__(self, gamma=1.5):
+        super().__init__()
+        self.gamma = gamma
+        self.f = gamma / (2 * sympy.pi * sympy.I) * sympy.log(self.z)
+        self.nom = "tourbillon"
+        self.update()
+
+
 if __name__ == "__main__":
-    E1 = EUniforme(7)
-    E2 = Puits(1, 2)
-    E3 = Source(2, 2.5)
+    E1 = EUniforme(15)
+    E2 = Puits(1, 3)
+    E3 = Source(0.5, 5)
+    E4 = Tourbillon(gamma=1.5)
 
-    E4 = E3 + E2
-    E4.nom = "Doublet"
-    E = E1 + E4
+    E = E1 + E2 + E3 + E4
 
-    fig1 = courant(E, 5, 5, (1, -1, -2, 2, 3, -3))
-    # fig2 = potentiel(E, 5, 5, (1, -1, -2, 2, 3, -3))
-    # champ(E4, (-5, 5), (-2, 2))
-
-    fig1.show()
-    # fig2.show()
-    # Export LaTeX
     try:
         with open("ProjetMecaniqueFluide.tex", "w") as tex:
             tex.write("\\documentclass{article}\n"
@@ -213,3 +228,9 @@ if __name__ == "__main__":
             tex.write("\\end{document}\n")
     except IOError as e:
         print(f"Erreur lors de l'écriture du fichier LaTeX : {e}")
+
+    fig1 = courant(E, 3, 3, np.linspace(-10, 10, 10))
+    # fig2 = potentiel(E, 3, 3, np.linspace(-10, 10, 50))
+    # champ(E, (-2, 2), (-1, 1))
+
+    plt.show()

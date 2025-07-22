@@ -2,18 +2,18 @@
 \usepackage{amsmath}
 \begin{document}
 \section*{Ecoulement : uniforme}
-Potentiel complexe \[7 x + 7 i y\]
-Fonction potentielle \[7 x\]
-Fonction courant \[7 y\]
-Champ vectoriel \[\left[\begin{matrix}7\\0\end{matrix}\right]\]
+Potentiel complexe \[15 x + 15 i y\]
+Fonction potentielle \[15 x\]
+Fonction courant \[15 y\]
+Champ vectoriel \[\left[\begin{matrix}15\\0\end{matrix}\right]\]
 \section*{Ecoulement : puits}
-Potentiel complexe \[- \frac{\log{\left(x + i y - 1 \right)}}{\pi}\]
-Fonction potentielle \[- \frac{\log{\left(\sqrt{x^{2} - 2 x + y^{2} + 1} \right)}}{\pi}\]
-Fonction courant \[- \frac{\arg{\left(x + i y - 1 \right)}}{\pi}\]
-Champ vectoriel \[\left[\begin{matrix}- \frac{x - 1}{\pi \left(x^{2} - 2 x + y^{2} + 1\right)}\\- \frac{y}{\pi \left(x^{2} - 2 x + y^{2} + 1\right)}\end{matrix}\right]\]
-\section*{Ecoulement : uniforme et source et puits combin�s combin�s}
-Potentiel complexe \[7 x + 7 i y - \frac{\log{\left(x + i y - 1 \right)}}{\pi} + \frac{1.25 \log{\left(x + i y + 2 \right)}}{\pi}\]
-Fonction potentielle \[7 x - \frac{\log{\left(\sqrt{x^{2} - 2 x + y^{2} + 1} \right)}}{\pi} + \frac{1.25 \log{\left(\sqrt{x^{2} + 4 x + y^{2} + 4} \right)}}{\pi}\]
-Fonction courant \[7 y - \frac{\arg{\left(x + i y - 1 \right)}}{\pi} + \frac{1.25 \arg{\left(x + i y + 2 \right)}}{\pi}\]
-Champ vectoriel \[\left[\begin{matrix}- \frac{x - 1}{\pi \left(x^{2} - 2 x + y^{2} + 1\right)} + \frac{1.25 \left(x + 2\right)}{\pi \left(x^{2} + 4 x + y^{2} + 4\right)} + 7\\\frac{1.25 y}{\pi \left(x^{2} + 4 x + y^{2} + 4\right)} - \frac{y}{\pi \left(x^{2} - 2 x + y^{2} + 1\right)}\end{matrix}\right]\]
+Potentiel complexe \[- \frac{3 \log{\left(x + i y - 1 \right)}}{2 \pi}\]
+Fonction potentielle \[- \frac{3 \log{\left(\sqrt{x^{2} - 2 x + y^{2} + 1} \right)}}{2 \pi}\]
+Fonction courant \[- \frac{3 \arg{\left(x + i y - 1 \right)}}{2 \pi}\]
+Champ vectoriel \[\left[\begin{matrix}- \frac{3 \left(x - 1\right)}{2 \pi \left(x^{2} - 2 x + y^{2} + 1\right)}\\- \frac{3 y}{2 \pi \left(x^{2} - 2 x + y^{2} + 1\right)}\end{matrix}\right]\]
+\section*{Ecoulement : uniforme, puits, source, tourbillon}
+Potentiel complexe \[15 x + 15 i y - \frac{0.75 i \log{\left(x + i y \right)}}{\pi} - \frac{3 \log{\left(x + i y - 1 \right)}}{2 \pi} + \frac{5 \log{\left(x + i y + 0.5 \right)}}{2 \pi}\]
+Fonction potentielle \[15 x - \frac{3 \log{\left(\sqrt{x^{2} - 2 x + y^{2} + 1} \right)}}{2 \pi} + \frac{5 \log{\left(\sqrt{x^{2} + 1.0 x + y^{2} + 0.25} \right)}}{2 \pi} + \frac{0.75 \arg{\left(x + i y \right)}}{\pi}\]
+Fonction courant \[15 y - \frac{0.75 \log{\left(\sqrt{x^{2} + y^{2}} \right)}}{\pi} - \frac{3 \arg{\left(x + i y - 1 \right)}}{2 \pi} + \frac{5 \arg{\left(x + i y + 0.5 \right)}}{2 \pi}\]
+Champ vectoriel \[\left[\begin{matrix}- \frac{0.75 y}{\pi \left(x^{2} + y^{2}\right)} - \frac{3 \left(x - 1\right)}{2 \pi \left(x^{2} - 2 x + y^{2} + 1\right)} + \frac{5 \left(x + 0.5\right)}{2 \pi \left(x^{2} + 1.0 x + y^{2} + 0.25\right)} + 15\\\frac{0.75 x}{\pi \left(x^{2} + y^{2}\right)} + \frac{5 y}{2 \pi \left(x^{2} + 1.0 x + y^{2} + 0.25\right)} - \frac{3 y}{2 \pi \left(x^{2} - 2 x + y^{2} + 1\right)}\end{matrix}\right]\]
 \end{document}
