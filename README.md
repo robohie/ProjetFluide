@@ -49,7 +49,7 @@
 <h2 style="color:#1976D2;">⚙️ Prérequis</h2>
 <ul>
   <li>Python 3.8 ou version supérieure</li>
-  <li>Packages : <code>numpy</code>, <code>matplotlib</code>, <code>scipy</code></li>
+  <li>Packages : <code>numpy</code>, <code>matplotlib</code>, <code>sympy</code></li>
 </ul>
 
 <h2 style="color:#1976D2;">🚀 Installation</h2>
