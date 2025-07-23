@@ -18,7 +18,8 @@
 #     TSHIMANGA KABANZA CRIS-BOAZ (GEI)
 # ==============================================
 # La réalisation de ce code a été assistée par
-# deux intelligences : DeepSeek et ChatGPT
+# deux intelligences : DeepSeek, ChatGPT et
+# GitHub Copilot Chat Assistant
 # qui nous ont apporté conseilles et suggestions
 # ==============================================
 # Ce module rassemble des structures de classe
@@ -426,7 +427,7 @@ def export_plots(objet, a: float, b: float, prefix: str = "ecoulement"):
 
 
 def generate_report(objet, filename: str = "ProjetMecaniqueFluide.tex"):
-    """Génère un rapport LaTeX complet et professionnel avec les résultats."""
+    """Génère un rapport LaTeX complet avec les résultats."""
     try:
         with open(filename, "w") as tex_file:
             tex_file.write(
@@ -458,7 +459,7 @@ def generate_report(objet, filename: str = "ProjetMecaniqueFluide.tex"):
                 "\\thispagestyle{empty}\n"
                 "\\vspace{1cm}\n"
                 "\\begin{center}\n"
-                "\\includegraphics[width=0.4\\textwidth]{logo_unikin.png}\n"
+                "\\includegraphics[width=0.4\\textwidth]{unikin.png}\n"
                 "\\end{center}\n"
                 "\\vfill\n"
                 "\\begin{center}\n"
@@ -494,6 +495,7 @@ def generate_report(objet, filename: str = "ProjetMecaniqueFluide.tex"):
     except Exception as e:
         print(f"Erreur lors de la génération du rapport: {str(e)}")
         return False
+
 
 if __name__ == "__main__":
     # Profil de Joukowski
