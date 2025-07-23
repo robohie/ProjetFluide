@@ -345,9 +345,9 @@ class ProfilJoukowski(PlanPlus):
         """Transforme les points du plan physique vers le plan du cercle."""
         return 0.5 * (zeta + np.sqrt(zeta ** 2 - 4 * self.c ** 2))
 
-    def eval_phi(self, x: np.ndarray, Y: np.ndarray) -> np.ndarray:
+    def eval_phi(self, x: np.ndarray, y: np.ndarray) -> np.ndarray:
         """Évalue la fonction potentielle sur une grille."""
-        Z = x + 1j * Y
+        Z = x + 1j * y
         Zc = self._transformation_inverse(Z)
 
         # Calcul du potentiel dans le plan du cercle
@@ -358,9 +358,9 @@ class ProfilJoukowski(PlanPlus):
 
         return np.real(W)
 
-    def eval_psi(self, X: np.ndarray, Y: np.ndarray) -> np.ndarray:
+    def eval_psi(self, x: np.ndarray, y: np.ndarray) -> np.ndarray:
         """Évalue la fonction courant sur une grille."""
-        return np.imag(self.eval_phi(X, Y) + 0j)  # +0j pour forcer le type complexe
+        return np.imag(self.eval_phi(x, y) + 0j)  # +0j pour forcer le type complexe
 
     def latex_params(self) -> str:
         params = [
@@ -422,21 +422,22 @@ def generate_report(objet, filename: str = "ProjetMecaniqueFluide.tex"):
             if isinstance(objet, ProfilJoukowski):
                 export_dir = export_plots(objet, 3, 3, "profil")
                 tex_file.write(
-            "\\begin{figure}[ht]\n"
-            "\\centering\n"
-            "\\includegraphics[width=0.8\\textwidth]{" + export_dir + "/profil_courant.png}\n"
-                    "\\caption{Lignes de courant autour du profil}\n"
-                    "\\end{figure}\n\n"
                     "\\begin{figure}[ht]\n"
                     "\\centering\n"
-                    "\\includegraphics[width=0.8\\textwidth]{" + export_dir + "/profil_potentiel.png}\n"
-                                                                                                                                        "\\caption{Équipotentielles autour du profil}\n"
-                                                                                                                                        "\\end{figure}\n\n"
-                                                                                                                                        "\\begin{figure}[ht]\n"
-                                                                                                                                        "\\centering\n"
-                                                                                                                                        "\\includegraphics[width=0.8\\textwidth]{" + export_dir + "/profil_champ.png}\n"
-                                                                                                                                                                                                  "\\caption{Champ de vitesse autour du profil}\n"
-                                                                                                                                                                                                  "\\end{figure}\n"
+                    "\\includegraphics[width=0.8\\textwidth]{" +
+                    export_dir + "/profil_courant.png}\n"
+                                 "\\caption{Lignes de courant autour du profil}\n"
+                                 "\\end{figure}\n\n"
+                                 "\\begin{figure}[ht]\n"
+                                 "\\centering\n"
+                                 "\\includegraphics[width=0.8\\textwidth]{" + export_dir + "/profil_potentiel.png}\n"
+                                                                                           "\\caption{Équipotentielles autour du profil}\n"
+                                                                                           "\\end{figure}\n\n"
+                                                                                           "\\begin{figure}[ht]\n"
+                                                                                           "\\centering\n"
+                                                                                           "\\includegraphics[width=0.8\\textwidth]{" + export_dir + "/profil_champ.png}\n"
+                                                                                                                                                     "\\caption{Champ de vitesse autour du profil}\n"
+                                                                                                                                                     "\\end{figure}\n"
                 )
 
             tex_file.write("\\end{document}\n")
