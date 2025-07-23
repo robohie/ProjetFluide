@@ -67,8 +67,8 @@ def latex(objet) -> str:
 def courant(objet, a: float, b: float, niveaux: List[float],
             title: str = "Lignes de courant") -> plt.Figure:
     """Trace les lignes de courant avec gestion des singularités."""
-    x_vals = np.linspace(-a, a, 400)
-    y_vals = np.linspace(-b, b, 400)
+    x_vals = np.linspace(-a, a, 500)
+    y_vals = np.linspace(-b, b, 500)
     X, Y = np.meshgrid(x_vals, y_vals)
 
     # Calcul de la fonction courant
@@ -105,23 +105,30 @@ def courant(objet, a: float, b: float, niveaux: List[float],
 def potentiel(objet, a: float, b: float, niveaux: List[float],
               title: str = "Équipotentiels") -> plt.Figure:
     """Trace les équipotentielles avec optimisation des calculs."""
-    x_vals = np.linspace(-a, a, 400)
-    y_vals = np.linspace(-b, b, 400)
+    x_vals = np.linspace(-a, a, 500)
+    y_vals = np.linspace(-b, b, 500)
     X, Y = np.meshgrid(x_vals, y_vals)
 
-    # Calcul de la fonction potentielle
+    # Calcul de la fonction courant
     if isinstance(objet, ProfilJoukowski):
         Phi = objet.eval_phi(X, Y)
     else:
-        phi_func = sympy.lambdify((objet.x, objet.y), objet.phi(), "numpy", cse=True)
+        phi_func = sympy.lambdify((objet.x, objet.y), objet.phi(),
+                                  "numpy", cse=True)
         Phi = phi_func(X, Y)
 
     # Création de la figure
     figure, ax = plt.subplots(figsize=(10, 8))
 
-    # Tracé des équipotentielles
+    # Tracé des lignes de courant
     contour = ax.contour(X, Y, Phi, levels=sorted(niveaux), linewidths=1.5)
     plt.clabel(contour, inline=True, fontsize=8)
+
+    # Tracé du profil pour Joukowski
+    if isinstance(objet, ProfilJoukowski):
+        ax.fill(objet.profil_x, objet.profil_y, color="white", zorder=5)
+        ax.plot(objet.profil_x, objet.profil_y, 'r-', linewidth=2.5,
+                label='Profil', zorder=6)
 
     # Configuration du graphique
     ax.set_title(f"{title} ({objet.nom})", fontsize=14)
@@ -129,6 +136,7 @@ def potentiel(objet, a: float, b: float, niveaux: List[float],
     ax.set_ylabel("y", fontsize=12)
     ax.grid(True, linestyle='--', alpha=0.7)
     ax.axis('equal')
+    ax.legend(loc='best')
 
     return figure
 
@@ -164,6 +172,7 @@ def champ(objet, x_lim: Tuple[float, float] = (-5, 5),
 
     # Tracé du profil pour Joukowski
     if isinstance(objet, ProfilJoukowski):
+        ax.fill(objet.profil_x, objet.profil_y, color="white", zorder=5)
         ax.plot(objet.profil_x, objet.profil_y, 'r-', linewidth=2.5)
 
     # Configuration du graphique
@@ -429,7 +438,7 @@ def export_plots(objet, a: float, b: float, prefix: str = "ecoulement"):
 def generate_report(objet, filename: str = "ProjetMecaniqueFluide.tex"):
     """Génère un rapport LaTeX complet avec les résultats."""
     try:
-        with open(filename, "w") as tex_file:
+        with open(filename, "w", encoding="utf8") as tex_file:
             tex_file.write(
                 "\\documentclass[12pt,a4paper]{article}\n"
                 "\\usepackage[utf8]{inputenc}\n"
@@ -437,10 +446,10 @@ def generate_report(objet, filename: str = "ProjetMecaniqueFluide.tex"):
                 "\\usepackage[french]{babel}\n"
                 "\\usepackage{amsmath,amssymb,amsfonts}\n"
                 "\\usepackage{graphicx}\n"
-                "\\usepackage{geometry}\n"
+                "\\usepackage[landscape]{geometry}\n"
                 "\\usepackage{hyperref}\n"
                 "\\usepackage{xcolor}\n"
-                "\\geometry{a4paper, margin=2.5cm}\n"
+                "\\geometry{a4paper, margin=2.5cm, marginparwidth=0pt}\n"
                 "\\title{\\textbf{Projet de Mécanique des Fluides}}\n"
                 "\\author{Membres du groupe :\\\\\n"
                 "BAMPIRE NGABO DAVID (GEI)\\\\\n"
@@ -459,7 +468,7 @@ def generate_report(objet, filename: str = "ProjetMecaniqueFluide.tex"):
                 "\\thispagestyle{empty}\n"
                 "\\vspace{1cm}\n"
                 "\\begin{center}\n"
-                "\\includegraphics[width=0.4\\textwidth]{unikin.png}\n"
+                "\\includegraphics[width=0.4\\textwidth]{unikin.jpg}\n"
                 "\\end{center}\n"
                 "\\vfill\n"
                 "\\begin{center}\n"
@@ -470,16 +479,33 @@ def generate_report(objet, filename: str = "ProjetMecaniqueFluide.tex"):
                 "\\end{center}\n"
                 "\\newpage\n"
                 "\\tableofcontents\n"
+                "\\listoffigures\n"
                 "\\newpage\n"
             )
 
             # Description de l'écoulement
-            tex_file.write("\\section{Présentation de l’écoulement}\n")
+            tex_file.write("\\section{Présentation de l'écoulement}\n")
             tex_file.write(latex(objet))
 
             # Ajout des figures
-            # (adapter ici selon la logique de tes figures)
-            # [...]
+            tex_file.write(
+                "\\begin{figure}[ht]"
+                "\\centering"
+                "\\includegraphics[width=0.8\\textwidth]{results/profil_courant.png}"
+                "\\caption{Lignes de courant autour du profil}"
+                "\\end{figure}"
+                "\\begin{figure}[ht]"
+                "\\centering"
+                "\\includegraphics[width=0.8\\textwidth]{results/profil_potentiel.png}"
+                "\\caption{équipotentielles autour du profil}"
+                "\\end{figure}"
+
+                "\\begin{figure}[ht]"
+                "\\centering"
+                "\\includegraphics[width=0.8\\textwidth]{results/profil_champ.png}"
+                "\\caption{Champ de vitesse autour du profil}"
+                "\\end{figure}"
+            )
 
             tex_file.write(
                 "\\section*{Remerciements}\n"
@@ -506,12 +532,11 @@ if __name__ == "__main__":
         x0=-0.1,
         y0=0.1
     )
+    # Doublet
+    E1 = Dipole(position=1)
+    E2 = EUniforme(u=5, angle=0)
+    E = E1 + E2
 
+    export_plots(profil, 3, 3, "profil")
     # Génération du rapport pour le profil
-    generate_report(profil)
-
-    # Visualisation interactive
-    fig = courant(profil, 3, 3, list(np.linspace(-4, 4, 30)))
-    fig.suptitle("Profil de Joukowski")
-    plt.tight_layout()
-    plt.show()
+    generate_report(profil, "ProjetMecaniqueFluide2.tex")

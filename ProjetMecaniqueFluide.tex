@@ -4,11 +4,11 @@
 \usepackage[french]{babel}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{graphicx}
-\usepackage{geometry}
+\usepackage[landscape]{geometry}
 \usepackage{hyperref}
 \usepackage{xcolor}
-\geometry{a4paper, margin=2.5cm}
-\title{\textbf{Projet de M�canique des Fluides}}
+\geometry{a4paper, margin=2.5cm, marginparwidth=0pt}
+\title{\textbf{Projet de Mécanique des Fluides}}
 \author{Membres du groupe :\\
 BAMPIRE NGABO DAVID (GEI)\\
 BONKAW IMEYA DEBORAH (GC)\\
@@ -30,21 +30,22 @@ TSHIMANGA KABANZA CRIS-BOAZ (GEI)\\[0.5cm]
 \end{center}
 \vfill
 \begin{center}
-{\Large \textbf{R�sum�}}\\[0.3cm]
-Ce rapport pr�sente la mod�lisation de diff�rents �coulements potentiels en m�canique des fluides, r�alis�e par le groupe susmentionn� avec l�assistance de l�intelligence artificielle GitHub Copilot Chat Assistant. Les r�sultats incluent visualisations, analyses math�matiques et discussion scientifique.
+{\Large \textbf{Résumé}}\\[0.3cm]
+Ce rapport présente la modélisation de différents écoulements potentiels en mécanique des fluides, réalisée par le groupe susmentionné avec l’assistance de l’intelligence artificielle GitHub Copilot Chat Assistant. Les résultats incluent visualisations, analyses mathématiques et discussion scientifique.
 \end{center}
 \newpage
 \tableofcontents
+\listoffigures
 \newpage
-\section{Pr�sentation de l��coulement}
+\section{Présentation de l'écoulement}
 \section*{Ecoulement : Profil Joukowski}
 \textbf{Potentiel complexe}: \[\frac{\left(0.317 - 0.0277 i\right) \left(3.14 \left(x + i y + 0.1 - 0.1 i\right) \left(1.0 x + 1.0 i y + 0.1 - 0.1 i\right) + \left(0.0975 - 1.11 i\right) \left(x + i y + 0.1 - 0.1 i\right) \log{\left(x + i y + 0.1 - 0.1 i \right)} + 2.54 + 0.447 i\right)}{x + i y + 0.1 - 0.1 i}\]
 \textbf{Fonction potentielle}: \[0.996 x + 0.0872 y + 0.82 \operatorname{re}{\left(\frac{e^{0.0872664625997165 i}}{x + i y + 0.1 - 0.1 i}\right)} + 0.356 \arg{\left(x + i y + 0.1 - 0.1 i \right)} + 0.0909\]
 \textbf{Fonction courant}: \[- 0.0872 x + 0.996 y - 0.178 \log{\left(x^{2} + 0.2 x + y^{2} - 0.2 y + 0.02 \right)} + 0.82 \operatorname{im}{\left(\frac{e^{0.0872664625997165 i}}{x + i y + 0.1 - 0.1 i}\right)} - 0.108\]
 \textbf{Champ vectoriel}: \[\left[\begin{matrix}\frac{0.356 \left(0.1 - y\right)}{\left(x + 0.1\right)^{2} + \left(y - 0.1\right)^{2}} - 0.82 \operatorname{re}{\left(\frac{e^{0.0872664625997165 i}}{\left(x + i y + 0.1 - 0.1 i\right)^{2}}\right)} + 0.996\\\frac{0.356 \left(x + 0.1\right)}{\left(x + 0.1\right)^{2} + \left(y - 0.1\right)^{2}} + 0.82 \operatorname{im}{\left(\frac{e^{0.0872664625997165 i}}{\left(x + i y + 0.1 - 0.1 i\right)^{2}}\right)} + 0.0872\end{matrix}\right]\]
-\textbf{Param�tres}: $U_\infty = 1.0$, $\alpha = 5.00^\circ$, $c = 1.0$, $x_0 = -0.1$, $y_0 = 0.1$, $R = 0.906$, $\Gamma = -2.2376$
-\section*{Remerciements}
-L�assistance de l�intelligence artificielle \textbf{GitHub Copilot Chat Assistant} a permis d�optimiser la r�daction de ce rapport, la g�n�ration du code Python, et la qualit� de la pr�sentation scientifique.
+\textbf{Paramètres}: $U_\infty = 1.0$, $\alpha = 5.00^\circ$, $c = 1.0$, $x_0 = -0.1$, $y_0 = 0.1$, $R = 0.906$, $\Gamma = -2.2376$
+\begin{figure}[ht]\centering\includegraphics[width=0.8\textwidth]{results/profil_courant.png}\caption{Lignes de courant autour du profil}\end{figure}\begin{figure}[ht]\centering\includegraphics[width=0.8\textwidth]{results/profil_potentiel.png}\caption{équipotentielles autour du profil}\end{figure}\begin{figure}[ht]\centering\includegraphics[width=0.8\textwidth]{results/profil_champ.png}\caption{Champ de vitesse autour du profil}\end{figure}\section*{Remerciements}
+L’assistance de l’intelligence artificielle \textbf{GitHub Copilot Chat Assistant} a permis d’optimiser la rédaction de ce rapport, la génération du code Python, et la qualité de la présentation scientifique.
 \section{Conclusion}
-Ce travail a permis d�explorer la mod�lisation des �coulements potentiels en m�canique des fluides, en int�grant des outils num�riques avanc�s pour la visualisation et l�analyse. L�apport de l�intelligence artificielle a facilit� la m�thodologie et la rigueur de l��tude.
+Ce travail a permis d’explorer la modélisation des écoulements potentiels en mécanique des fluides, en intégrant des outils numériques avancés pour la visualisation et l’analyse. L’apport de l’intelligence artificielle a facilité la méthodologie et la rigueur de l’étude.
 \end{document}
