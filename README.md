@@ -18,6 +18,7 @@
   <li><strong>Esafe Isimo Benjamin</strong> (GC)</li>
   <li><strong>Kabongo Mukendi Odon</strong> (GM)</li>
   <li><strong>Liaki L'amboka Michel</strong> (GC)</li>
+  <li><strong>Mukenge Kolm Thaddée</strong></li>
   <li><strong>Nukuese Ngongo Isaac</strong> (GEI)</li>
   <li><strong>Tshimanga Kabanza Cris-Boaz</strong> (GEI)</li>
 </ul>
