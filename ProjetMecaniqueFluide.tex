@@ -1,9 +1,33 @@
 \documentclass{article}
-\usepackage{amsmath}
+\usepackage[utf8]{inputenc}\usepackage[T1]{fontenc}\usepackage[french]{babel}\usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage{geometry}
 \geometry{a4paper, margin=1.5cm}
-\title{Projet de Mécanique des Fluides}
+\title{Projet de Mï¿½canique des Fluides}
 \date{\today}
 \begin{document}
 \maketitle
+\section*{Ecoulement : Profil Joukowski}
+\textbf{Potentiel complexe}: \[\frac{\left(0.317 - 0.0277 i\right) \left(3.14 \left(x + i y + 0.1 - 0.1 i\right) \left(1.0 x + 1.0 i y + 0.1 - 0.1 i\right) + \left(0.0975 - 1.11 i\right) \left(x + i y + 0.1 - 0.1 i\right) \log{\left(x + i y + 0.1 - 0.1 i \right)} + 2.54 + 0.447 i\right)}{x + i y + 0.1 - 0.1 i}\]
+\textbf{Fonction potentielle}: \[0.996 x + 0.0872 y + 0.82 \operatorname{re}{\left(\frac{e^{0.0872664625997165 i}}{x + i y + 0.1 - 0.1 i}\right)} + 0.356 \arg{\left(x + i y + 0.1 - 0.1 i \right)} + 0.0909\]
+\textbf{Fonction courant}: \[- 0.0872 x + 0.996 y - 0.178 \log{\left(x^{2} + 0.2 x + y^{2} - 0.2 y + 0.02 \right)} + 0.82 \operatorname{im}{\left(\frac{e^{0.0872664625997165 i}}{x + i y + 0.1 - 0.1 i}\right)} - 0.108\]
+\textbf{Champ vectoriel}: \[\left[\begin{matrix}\frac{0.356 \left(0.1 - y\right)}{\left(x + 0.1\right)^{2} + \left(y - 0.1\right)^{2}} - 0.82 \operatorname{re}{\left(\frac{e^{0.0872664625997165 i}}{\left(x + i y + 0.1 - 0.1 i\right)^{2}}\right)} + 0.996\\\frac{0.356 \left(x + 0.1\right)}{\left(x + 0.1\right)^{2} + \left(y - 0.1\right)^{2}} + 0.82 \operatorname{im}{\left(\frac{e^{0.0872664625997165 i}}{\left(x + i y + 0.1 - 0.1 i\right)^{2}}\right)} + 0.0872\end{matrix}\right]\]
+\textbf{Paramï¿½tres}: $U_\infty = 1.0$, $\alpha = 5.00^\circ$, $c = 1.0$, $x_0 = -0.1$, $y_0 = 0.1$, $R = 0.906$, $\Gamma = -2.2376$
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.8\textwidth]{results/profil_courant.png}
+\caption{Lignes de courant autour du profil}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.8\textwidth]{results/profil_potentiel.png}
+\caption{ï¿½quipotentielles autour du profil}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.8\textwidth]{results/profil_champ.png}
+\caption{Champ de vitesse autour du profil}
+\end{figure}
+\end{document}

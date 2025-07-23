@@ -1,20 +1,33 @@
-# ================================
+# ==============================================
 # FACULTE POLYTECHNIQUE
 # UNIVERSITE DE KINSHASA / UNIKIN
-# ================================
+# ==============================================
 # Projet de MECANIQUE DES FLUIDES
 # Deuxième licence en science de
 # l'ingénieur : GEI, GC, GM
-# ================================
+# ==============================================
 # Membres du groupe :
-#     BOSOLINDO EDHIENGENE ROGER (GEI)
 #     BAMPIRE NGABO DAVID (GEI)
+#     BONKAW IMEYA DEBORAH (GC)
+#     BOSALA CHRISTY (GC)
+#     BOSOLINDO EDHIENGENE ROGER (GEI)
 #     ESAFE ISIMO BENJAMIN (GC)
 #     KABONGO MUKENDI ODON (GM)
+#     LIAKI L'AMBOKA MICHEL (GC)
 #     MUKENGE KOLM THADDEE (GEI)
 #     TSHIMANGA KABANZA CRIS-BOAZ (GEI)
-#     DEBORAH (GC)
-# ================================
+# ==============================================
+# La réalisation de ce code a été assistée par
+# deux intelligences : DeepSeek et ChatGPT
+# qui nous ont apporté conseilles et suggestions
+# ==============================================
+# Ce module rassemble des structures de classe
+# qui implémentent quelques écoulements simples
+# à savoir : Uniforme, Source, Puits, Doublet
+# avec les écoulements ci-haut on peut simuler
+# de façon approximative l'écoulement autour d'une
+# hélice. L'IA nous a aidé avec Joukowski pour
+# une représentation réaliste
 
 import sympy
 import matplotlib.pyplot as plt
@@ -29,12 +42,23 @@ warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 def latex(objet) -> str:
     """Génère une section LaTeX détaillée résumant l'écoulement."""
+    f_expr = objet.f.simplify()
+    phi_expr = objet.phi().simplify()
+    psi_expr = objet.psi().simplify()
+    champ_expr = objet.vect_v()
+
+    # Simplification numérique
+    f_num = f_expr.evalf(3)
+    phi_num = phi_expr.evalf(3)
+    psi_num = psi_expr.evalf(3)
+    champ_num = champ_expr.applyfunc(lambda e:
+                                     e.evalf(3) if champ_expr is not None else "Non défini")
     return (
         f"\\section*{{Ecoulement : {objet.nom}}}\n"
-        f"\\textbf{{Potentiel complexe}}: \\[{sympy.latex(objet.f.simplify())}\\]\n"
-        f"\\textbf{{Fonction potentielle}}: \\[{sympy.latex(objet.phi().simplify())}\\]\n"
-        f"\\textbf{{Fonction courant}}: \\[{sympy.latex(objet.psi().simplify())}\\]\n"
-        f"\\textbf{{Champ vectoriel}}: \\[{sympy.latex(objet.vect_v().simplify())}\\]\n"
+        f"\\textbf{{Potentiel complexe}}: \\[{sympy.latex(f_num)}\\]\n"
+        f"\\textbf{{Fonction potentielle}}: \\[{sympy.latex(phi_num)}\\]\n"
+        f"\\textbf{{Fonction courant}}: \\[{sympy.latex(psi_num)}\\]\n"
+        f"\\textbf{{Champ vectoriel}}: \\[{sympy.latex(champ_num)}\\]\n"
         f"\\textbf{{Paramètres}}: {objet.latex_params()}\n"
     )
 
@@ -54,7 +78,7 @@ def courant(objet, a: float, b: float, niveaux: List[float],
         Psi = psi_func(X, Y)
 
     # Création de la figure
-    fig, ax = plt.subplots(figsize=(10, 8))
+    figure, ax = plt.subplots(figsize=(10, 8))
 
     # Tracé des lignes de courant
     contour = ax.contour(X, Y, Psi, levels=sorted(niveaux), linewidths=1.5)
@@ -62,7 +86,9 @@ def courant(objet, a: float, b: float, niveaux: List[float],
 
     # Tracé du profil pour Joukowski
     if isinstance(objet, ProfilJoukowski):
-        ax.plot(objet.profil_x, objet.profil_y, 'r-', linewidth=2.5, label='Profil')
+        ax.fill(objet.profil_x, objet.profil_y, color="gray", zorder=5)
+        ax.plot(objet.profil_x, objet.profil_y, 'r-', linewidth=2.5,
+                label='Profil', zorder=6)
 
     # Configuration du graphique
     ax.set_title(f"{title} ({objet.nom})", fontsize=14)
@@ -72,7 +98,7 @@ def courant(objet, a: float, b: float, niveaux: List[float],
     ax.axis('equal')
     ax.legend(loc='best')
 
-    return fig
+    return figure
 
 
 def potentiel(objet, a: float, b: float, niveaux: List[float],
@@ -90,7 +116,7 @@ def potentiel(objet, a: float, b: float, niveaux: List[float],
         Phi = phi_func(X, Y)
 
     # Création de la figure
-    fig, ax = plt.subplots(figsize=(10, 8))
+    figure, ax = plt.subplots(figsize=(10, 8))
 
     # Tracé des équipotentielles
     contour = ax.contour(X, Y, Phi, levels=sorted(niveaux), linewidths=1.5)
@@ -103,7 +129,7 @@ def potentiel(objet, a: float, b: float, niveaux: List[float],
     ax.grid(True, linestyle='--', alpha=0.7)
     ax.axis('equal')
 
-    return fig
+    return figure
 
 
 def champ(objet, x_lim: Tuple[float, float] = (-5, 5),
@@ -129,7 +155,7 @@ def champ(objet, x_lim: Tuple[float, float] = (-5, 5),
     V_norm = np.where(magnitude > 0, V / magnitude, 0)
 
     # Création de la figure
-    fig, ax = plt.subplots(figsize=(10, 8))
+    figure, ax = plt.subplots(figsize=(10, 8))
 
     # Tracé du champ vectoriel
     ax.quiver(X, Y, U_norm, V_norm, magnitude,
@@ -148,7 +174,7 @@ def champ(objet, x_lim: Tuple[float, float] = (-5, 5),
     ax.grid(True, linestyle='--', alpha=0.5)
     ax.axis('equal')
 
-    return fig
+    return figure
 
 
 class PlanPlus:
@@ -343,7 +369,7 @@ class ProfilJoukowski(PlanPlus):
 
     def _transformation_inverse(self, zeta: np.ndarray) -> np.ndarray:
         """Transforme les points du plan physique vers le plan du cercle."""
-        return 0.5 * (zeta + np.sqrt(zeta ** 2 - 4 * self.c ** 2))
+        return 0.5 * (zeta + np.sqrt(zeta ** 2 - 4 * self.c ** 2 + 0j))
 
     def eval_phi(self, x: np.ndarray, y: np.ndarray) -> np.ndarray:
         """Évalue la fonction potentielle sur une grille."""
@@ -356,11 +382,11 @@ class ProfilJoukowski(PlanPlus):
                 (self.R ** 2 * np.exp(1j * self.alpha)) / (Zc - self.z0)
         ) + (1j * self.gamma / (2 * np.pi)) * np.log(Zc - self.z0)
 
-        return np.real(W)
+        return W
 
     def eval_psi(self, x: np.ndarray, y: np.ndarray) -> np.ndarray:
         """Évalue la fonction courant sur une grille."""
-        return np.imag(self.eval_phi(x, y) + 0j)  # +0j pour forcer le type complexe
+        return np.imag(self.eval_phi(x, y))
 
     def latex_params(self) -> str:
         params = [
@@ -405,6 +431,9 @@ def generate_report(objet, filename: str = "ProjetMecaniqueFluide.tex"):
         with open(filename, "w") as tex_file:
             tex_file.write(
                 "\\documentclass{article}\n"
+                "\\usepackage[utf8]{inputenc}"
+                "\\usepackage[T1]{fontenc}"
+                "\\usepackage[french]{babel}"
                 "\\usepackage{amsmath}\n"
                 "\\usepackage{graphicx}\n"
                 "\\usepackage{geometry}\n"
@@ -451,16 +480,6 @@ def generate_report(objet, filename: str = "ProjetMecaniqueFluide.tex"):
 
 
 if __name__ == "__main__":
-    # Exemple d'écoulement uniforme
-    ecoulement_uniforme = EUniforme(u=1.5, angle=np.radians(10))
-
-    # Exemple de source et puits
-    source = Source(debit=2.0, position=-2 + 1j)
-    puits = Puits(debit=2.0, position=2 + 1j)
-
-    # Combinaison d'écoulements
-    ecoulement_combine = ecoulement_uniforme + source + puits
-
     # Profil de Joukowski
     profil = ProfilJoukowski(
         u_inf=1.0,
@@ -474,6 +493,7 @@ if __name__ == "__main__":
     generate_report(profil)
 
     # Visualisation interactive
-    courant(profil, 3, 3, list(np.linspace(-2, 2, 15))).suptitle("Profil de Joukowski")
+    fig = courant(profil, 3, 3, list(np.linspace(-4, 4, 30)))
+    fig.suptitle("Profil de Joukowski")
     plt.tight_layout()
     plt.show()
